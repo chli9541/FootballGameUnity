@@ -361,7 +361,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 3.2591181e+22, z: 4.5914e-41, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: -3.645962e-15, z: 4.5879e-41, w: 174080}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -531,7 +531,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Increase Ability
+  m_Text: Next Round
 --- !u!222 &1021828173
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -574,8 +574,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: 120}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 0, y: 120}
+  m_SizeDelta: {x: 600, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1188349381
 MonoBehaviour:
@@ -609,7 +609,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Messi
+  m_Text: Click for one year of change, ideally for 18 yro range is (2,4), 29-32
+    range is (-0.5,-1.5)
 --- !u!222 &1188349382
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -747,6 +748,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1242439449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b191e881779b84db191ccc29abd76e1e, type: 3}
+  m_Script: {fileID: 11500000, guid: d1bd66aedf57c4bc7b2daaa483e4dd6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
