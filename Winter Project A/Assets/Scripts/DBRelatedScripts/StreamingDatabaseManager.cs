@@ -450,6 +450,9 @@ public class StreamingDatabaseManager
         }
         return players;
     }
+
+
+    ///Here are player trainig related codes
     /// <summary> 
     /// this is the function that reads player abilities and update them and write them in db
     /// for ability changes due to training 
@@ -529,17 +532,20 @@ public class StreamingDatabaseManager
         MakeNonSelectionQuery(query4);
     }
 
-    public static void NextRoundUpdate(int teamID) {
-        UnityEngine.Debug.Log("start next round update");
-        string query1 = string.Format("update Players SET tackling = tackling + 0.1 where CurrentTeam = {0} and age<20", teamID);
-        string query2 = string.Format("update Players SET tackling = tackling + 0.07 where CurrentTeam = {0} and 19<age<25", teamID);
-        string query3 = string.Format("update Players SET tackling = tackling + 0.04 where CurrentTeam = {0} and 24<age<30", teamID);
-        string query4 = string.Format("update Players SET tackling = tackling + 0.02 where CurrentTeam = {0} and 29<age<35", teamID);
-        MakeNonSelectionQuery(query1);
-        MakeNonSelectionQuery(query2);
-        MakeNonSelectionQuery(query3);
-        MakeNonSelectionQuery(query4);
+    ///Here are player evaluation related codes
+    public static void UpdatePlayerAbility(Player player) {
+        string query = string.Format("update Players SET pace = {0},strength = {1}, agility = {2}, stamina = {3}, shooting = {4}, shortpass = {5}, longpass = {6}, header = {7}, tackling = {8}, anticipation = {9} where ID = {10}",player.pace, player.strength, player.agility, player.stamina,player.shooting,player.shortPass,player.longPass,player.header,player.tackling, player.anticipation, player.ID);
+        MakeNonSelectionQuery(query);
     }
+    /**
+    public static void UpdatePlayersAbility(List<Player> players)
+    {
+        foreach (Player player in players) {
+            UpdatePlayerAbility(player);
+        }
+    }
+    **/
+
 
 
 }

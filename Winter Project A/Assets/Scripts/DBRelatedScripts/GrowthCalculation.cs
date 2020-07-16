@@ -258,4 +258,37 @@ public class GrowthCalculation : MonoBehaviour
         player.agility = 10;
     }
 
+    public static void RoundUpdate(List<Player> players) {
+        foreach(Player player in players){
+            int age = player.GetAge();
+            if (age <= 18){
+                ChangePlayerUnder18(player);
+            }
+            if (age >= 29 && age <= 32) {
+                ChangePlayer29to32(player);
+            }
+
+            if (player.position == "前腰")
+                ChangePlayerAM(player);
+            else if (player.position == "后腰")
+                ChangePlayerDM(player);
+            else if (player.position == "中前卫")
+                ChangePlayerCM(player);
+            else if (player.position == "前锋")
+                ChangePlayerST(player);
+            else if (player.position == "中锋")
+                ChangePlayerCF(player);
+            else if (player.position.Contains("边卫"))
+                ChangePlayerFB(player);
+            else if (player.position.Contains("边前卫"))
+                ChangePlayerWM(player);
+            else if (player.position.Contains("边锋"))
+                ChangePlayerWF(player);
+            else if (player.position == ("中后卫"))
+                ChangePlayerCB(player);
+        }
+        
+    }
+
+
 }
