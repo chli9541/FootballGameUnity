@@ -6,9 +6,11 @@ public class GrowthCalculation : MonoBehaviour
 {
     public static float RandomFloat(double minValue, double maxValue)
     {
+        float TempMinValue = (float)minValue;
+        float TempMaxValue = (float)maxValue;
         int RandomIndex = Random.Range(1, 5); //5 is arbitrarily chosen
 
-        return (float)(RandomIndex * (maxValue - minValue) / 5 + minValue);
+        return (RandomIndex * (TempMaxValue - TempMinValue) / 5 + TempMinValue);
 
     }
     public static void ChangePlayerUnder18(Player player) {
@@ -16,7 +18,7 @@ public class GrowthCalculation : MonoBehaviour
         float SecondaryGrowth18 = RandomFloat(0.02, 0.04);
         float LittleGrowth18 = RandomFloat(0.01, 0.03);
 
-        player.shooting = player.shooting + SecondaryGrowth18;
+        player.shooting += SecondaryGrowth18;
         player.pace += MainGrowth18;
         player.anticipation += LittleGrowth18;
         player.tackling += SecondaryGrowth18;

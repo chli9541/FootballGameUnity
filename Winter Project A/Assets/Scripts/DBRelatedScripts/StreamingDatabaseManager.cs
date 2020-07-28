@@ -533,10 +533,7 @@ public class StreamingDatabaseManager
     }
 
     ///Here are player evaluation related codes
-    public static void UpdatePlayerAbility(Player player) {
-        string query = string.Format("update Players SET pace = {0},strength = {1}, agility = {2}, stamina = {3}, shooting = {4}, shortpass = {5}, longpass = {6}, header = {7}, tackling = {8}, anticipation = {9} where ID = {10}",player.pace, player.strength, player.agility, player.stamina,player.shooting,player.shortPass,player.longPass,player.header,player.tackling, player.anticipation, player.ID);
-        MakeNonSelectionQuery(query);
-    }
+
     /**
     public static void UpdatePlayersAbility(List<Player> players)
     {
@@ -546,7 +543,34 @@ public class StreamingDatabaseManager
     }
     **/
 
+    public static List<Player> GetAllPlayers() {
+        string query = string.Format("SELECT * FROM Players");
+        List<int> ids = new List<int>();
+        string conn = "URI=file:" + Application.dataPath + "/StreamingAssets/db.db"; //Path to database.
+        using (SqliteConnection c = new SqliteConnection(conn))
+        {
+            c.Open();
+            using (SqliteCommand cmd = new SqliteCommand(query, c))
+            {
+                using (SqliteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
 
+                        ids.Add(reader.GetInt32(0));
+                    }
+                }
+            }
+        }
+        return GetMultiplePlayers(ids);
+    }
+
+    public static void UpdateNull()
+    {
+        string query = string.Format("UPDATE Players SET UMAString  = 'NA' WHERE UMAString IS NULL;");
+        MakeNonSelectionQuery(query);
+
+    }
 
 }
 

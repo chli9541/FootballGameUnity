@@ -15,17 +15,21 @@ public class ButtonPlayerEvaluation : MonoBehaviour
         myBtn.onClick.AddListener(delegate
         {//I am using current team = 0's players to test
             List<Player> TempPlayer = StreamingDatabaseManager.GetPlayersFromTeam(0);
+
+
             float before = PlayerEvaluater.EvaluateCM(TempPlayer[11]);
             for (int i = 1; i < 61; i++)
             {
                 GrowthCalculation.RoundUpdate(TempPlayer);
             }
             float after = PlayerEvaluater.EvaluateCM(TempPlayer[11]);
+
+
             //TempPlayer[11].pace += (float)0.5;
 
-            foreach (Player player in TempPlayer){
-                StreamingDatabaseManager.UpdatePlayerAbility(player);
-                }
+
+
+
             Debug.Log(TempPlayer[11].playerName + " " + TempPlayer[11].position + " " + TempPlayer[11].GetAge() + "Pace is: " + TempPlayer[11].pace + "Before: " + before + "After: " + after); //+"Before: "+before + "After: " + after
 
         });
