@@ -300,6 +300,7 @@ public class StreamingDatabaseManager
         return GetMultiplePlayers(ids);
     }
 
+    
 
 
     public static List<Player> GetMultiplePlayers(List<int> playerIDs)
@@ -543,8 +544,8 @@ public class StreamingDatabaseManager
     }
     **/
 
-    public static List<Player> GetAllPlayers() {
-        string query = string.Format("SELECT * FROM Players");
+    public static List<Player> GetAllChinesePlayers() {
+        string query = string.Format("SELECT * FROM Players WHERE Nationality = '中国'");
         List<int> ids = new List<int>();
         string conn = "URI=file:" + Application.dataPath + "/StreamingAssets/db.db"; //Path to database.
         using (SqliteConnection c = new SqliteConnection(conn))
@@ -571,6 +572,57 @@ public class StreamingDatabaseManager
         MakeNonSelectionQuery(query);
 
     }
+    /// <summary>
+    /// Return all the chinese players from the same league as teamID, and this function allows evaluation calculation possible
+    /// </summary>
+    /// <param name="TeamID"></param>
+    /// <returns></returns>
+    public static List<Player> SearchChinesePlayersFromSameLeague(int TeamID)
+    {
+        //string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = 3);");
+        string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = (SELECT BelongingLeague FROM Teams WHERE ID = {0}));",TeamID);
+        List<int> ids = new List<int>();
+        string conn = "URI=file:" + Application.dataPath + "/StreamingAssets/db.db"; //Path to database.
+        using (SqliteConnection c = new SqliteConnection(conn))
+        {
+            c.Open();
+            using (SqliteCommand cmd = new SqliteCommand(query, c))
+            {
+                using (SqliteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
 
+                        ids.Add(reader.GetInt32(0));
+                    }
+                }
+            }
+        }
+        return GetMultiplePlayers(ids);
+    
+}
+    public static int  GetTeamWealth(int TeamID)
+    {
+        //string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = 3);");
+        string query = string.Format("SELECT TeamWealth FROM Teams WHERE ID = {0};", TeamID);
+        int TeamWealth = -1;
+        string conn = "URI=file:" + Application.dataPath + "/StreamingAssets/db.db"; //Path to database.
+        using (SqliteConnection c = new SqliteConnection(conn))
+        {
+            c.Open();
+            using (SqliteCommand cmd = new SqliteCommand(query, c))
+            {
+                using (SqliteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+
+                        TeamWealth = reader.GetInt32(0) * 10000;
+                    }
+                }
+            }
+        }
+        return TeamWealth;
+    }
 }
 
