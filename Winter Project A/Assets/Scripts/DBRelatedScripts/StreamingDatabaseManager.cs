@@ -544,8 +544,8 @@ public class StreamingDatabaseManager
     }
     **/
 
-    public static List<Player> GetAllChinesePlayers() {
-        string query = string.Format("SELECT * FROM Players WHERE Nationality = '中国'");
+    public static List<Player> GetAllTradableChinesePlayers() {
+        string query = string.Format("SELECT * FROM Players WHERE Nationality = '中国'AND Tradable = 0");
         List<int> ids = new List<int>();
         string conn = "URI=file:" + Application.dataPath + "/StreamingAssets/db.db"; //Path to database.
         using (SqliteConnection c = new SqliteConnection(conn))

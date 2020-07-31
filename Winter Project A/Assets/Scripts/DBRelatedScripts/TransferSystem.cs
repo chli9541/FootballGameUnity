@@ -84,25 +84,58 @@ public class TransferSystem : MonoBehaviour
         }
         return PositionsNeeded;
     }
-    public static Dictionary<string, List<Player>> FindPlayerByPosition(List<string> PositionsNeeded, List<Player> AllChinesePlayers, Dictionary<string, float> LeagueAvg, int TeamWealth) {
-        Dictionary<string, List<Player>> PlayersNeeded = new Dictionary<string, List<Player>>();
-        PlayersNeeded.Add("Type1",new List<Player>());
-        PlayersNeeded.Add("Type2", new List<Player>());
-        PlayersNeeded.Add("Type3", new List<Player>());
+    //Type1
+    public static Dictionary<string, Player> TypeOnePlayers(List<string> PositionsNeeded, List<Player> AllChinesePlayers, Dictionary<string, float> LeagueAvg, Dictionary<string, float> TeamAvg, int TeamWealth) {
+        Dictionary<string, Player> PlayersNeeded = new Dictionary<string, Player>();
+        if(PositionsNeeded.Count > 0){
+            foreach (Player player in AllChinesePlayers)
+            {
+                if (PositionsNeeded.Contains(player.position))
+                {
+                    float evaluation = PlayerEvaluater.EvaluatePlayer(player);
+                    int TransferBaseFee = PlayerEvaluater.EvaluatePlayerTransferFee(player);
 
-        foreach (Player player in AllChinesePlayers) {
-            if (PositionsNeeded.Contains(player.position)) {
-                float evaluation = PlayerEvaluater.EvaluatePlayer(player);
-                int TransferBaseFee = PlayerEvaluater.EvaluatePlayerTransferFee(player);
-                if ((evaluation >= (LeagueAvg[player.position] * 0.9)) && (evaluation <= (LeagueAvg[player.position] * 1.1)) &&(TeamWealth >= 1.5 * TransferBaseFee))  {
-                    PlayersNeeded["Type1"].Add(player);
+                    if (!(PlayersNeeded.ContainsKey(player.position)))
+                    {
+                        if (evaluation > TeamAvg[player.position])
+                        {
+                            if ((evaluation >= (LeagueAvg[player.position] * 0.9)) && (evaluation <= (LeagueAvg[player.position] * 1.1)) && (TeamWealth >= 1.5 * TransferBaseFee))
+                            {
+                                PlayersNeeded.Add(player.position, player);
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (evaluation > TeamAvg[player.position])
+                    {
+
+                        if ((evaluation >= (LeagueAvg[player.position] * 0.9)) && (evaluation <= (LeagueAvg[player.position] * 1.1)) && (TeamWealth >= 1.5 * TransferBaseFee))
+                        {
+
+                        int TransferBaseFeeSoFar = PlayerEvaluater.EvaluatePlayerTransferFee(PlayersNeeded[player.position]);
+                        if (TransferBaseFee < TransferBaseFeeSoFar)
+                            {
+                            PlayersNeeded[player.position] = player;
+                            }
+
+                        }
+                    }
+
                 }
-                //TODO: Add type2 and Type3 condition
             }
-            }
+        }
         return PlayersNeeded;
     }
-    //TODO: For same position, buy the cheapest players to tyr to satisfy all 3 needs. Do a check on positions needed
+    //Type2
+
+    //Type3
+
+
+
+
+    //TODO: A function that takes 3 dictionaries and decide which players to buy(based on need, maybe an Array to Queue)
+    
 
 
 }

@@ -16,12 +16,13 @@ public class ButtonTransfer : MonoBehaviour
         {
 
             StreamingDatabaseManager.UpdateNull();//Fixed Database Null bug, not necessary if database does not have null values.
-            int teamIndex = 0;//just using team 0 as an example, later you can change to any team.
-            int teamWealth = StreamingDatabaseManager.GetTeamWealth(teamIndex);
-            List<Player> TeamPlayers = StreamingDatabaseManager.GetPlayersFromTeam(teamIndex);
-            TransferSystem.GetChinesePlayersInTeam(TeamPlayers); //Right now we only make Chinese Players transfer system
+            int TeamIndex = 4;//just using team 4 as an example, later you can change to any team.
+            int TeamWealth = StreamingDatabaseManager.GetTeamWealth(TeamIndex);
 
-            List<Player> LeaguePlayers = StreamingDatabaseManager.SearchChinesePlayersFromSameLeague(teamIndex);
+            List<Player> TeamPlayers = StreamingDatabaseManager.GetPlayersFromTeam(TeamIndex);
+            TransferSystem.GetChinesePlayersInTeam(TeamPlayers); //This step is very important to include: right now we only make Chinese Players transfer system
+
+            List<Player> LeaguePlayers = StreamingDatabaseManager.SearchChinesePlayersFromSameLeague(TeamIndex);
             
 
             Dictionary<string, float> LeagueAvg = new Dictionary<string, float>();
@@ -32,11 +33,16 @@ public class ButtonTransfer : MonoBehaviour
             TransferSystem.CalculateLeagueAvg(LeagueAvg, LeaguePositionCount, LeaguePlayers);
             TransferSystem.CalculateLeagueAvg(TeamAvg, TeamPositionCount, TeamPlayers);
             List<string> PositionsNeeded = TransferSystem.CompareTeamAvgAndLeagueAvg(LeagueAvg,TeamAvg);
-            List<Player> AllChinesePlayers = StreamingDatabaseManager.GetAllChinesePlayers();
+            //Debug.Log(PositionsNeeded[0]);
+            //Debug.Log(PositionsNeeded[1]);
+            //Debug.Log(LeagueAvg["前锋"] - TeamAvg["前锋"]); To show that type 1 standard works
 
-            
+            List<Player> AllChinesePlayers = StreamingDatabaseManager.GetAllTradableChinesePlayers();
+            LeaguePositionCount = null; //delete League Position Count Dictionary 
+            TeamPositionCount = null;   //delete Team Position Count Dictionary 
 
-
+            Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded,AllChinesePlayers,LeagueAvg,TeamAvg,TeamWealth);
+            Debug.Log(TypeOneTransfer["前锋"].playerName);
 
 
         }
