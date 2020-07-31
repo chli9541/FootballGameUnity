@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TransferSystem : MonoBehaviour
@@ -67,7 +68,7 @@ public class TransferSystem : MonoBehaviour
         }
     }
     /// <summary>
-    /// Check Type 1 Transer: if LeagueAvg and TeamAvg have a big difference 
+    /// Check Type 1 Transfer: if LeagueAvg and TeamAvg have a big difference 
     /// </summary>
     /// <param name="LeagueAvg"></param>
     /// <param name="TeamAvg"></param>
@@ -128,14 +129,62 @@ public class TransferSystem : MonoBehaviour
         return PlayersNeeded;
     }
     //Type2
+    public static List<string> ComparePositionAvgAndTeamAvg(List<Player> TeamPlayers)
+    {
+        List<Player> TempTeamPlayers = TeamPlayers;
+        Dictionary<string, Player> BestPlayers = new Dictionary<string, Player>();
+        Dictionary<string, Player> SecondBestPlayers = new Dictionary<string, Player>();
+        Dictionary<Player,float> PlayerScoreDict = new Dictionary<Player,float>();
+        foreach (Player player in TeamPlayers) {
+            float PlayerScore = PlayerEvaluater.EvaluatePlayer(player);
+            PlayerScoreDict.Add(player,PlayerScore);
+        }
+        
+        foreach (Player player in TempTeamPlayers)
+        {
 
-    //Type3
+            if (!(BestPlayers.ContainsKey(player.position)))//if first time encountering this position, it will be best so far
+            {
+                BestPlayers.Add(player.position, player);
+            }
+            else {
+                if (PlayerScoreDict[player] > PlayerScoreDict[BestPlayers[player.position]]) {
+                    BestPlayers[player.position] = player;
+                }
+            }
+
+        }
+        foreach (KeyValuePair<string, Player> BestPlayer in BestPlayers) {
+            TempTeamPlayers.Remove(BestPlayer.Value);
+        }
+        //After removing all best players we can find secnod best
+        foreach (Player player in TempTeamPlayers)
+        {
+
+            if (!(SecondBestPlayers.ContainsKey(player.position)))//if first time encountering this position, it will be best so far
+            {
+                SecondBestPlayers.Add(player.position, player);
+            }
+            else
+            {
+                if (PlayerScoreDict[player] > PlayerScoreDict[SecondBestPlayers[player.position]])
+                {
+                    SecondBestPlayers[player.position] = player;
+                }
+            }
+
+        }
+
+        List<string> result = new List<string>();
+        return result;
+    }
+        //Type3
 
 
 
 
-    //TODO: A function that takes 3 dictionaries and decide which players to buy(based on need, maybe an Array to Queue)
-    
+        //TODO: A function that takes 3 dictionaries and decide which players to buy(based on need, maybe an Array to Queue)
 
 
-}
+
+    }
