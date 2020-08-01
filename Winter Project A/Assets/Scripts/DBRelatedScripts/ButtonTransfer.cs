@@ -23,7 +23,7 @@ public class ButtonTransfer : MonoBehaviour
             TransferSystem.GetChinesePlayersInTeam(TeamPlayers); //This step is very important to include: right now we only make Chinese Players transfer system
 
             List<Player> LeaguePlayers = StreamingDatabaseManager.SearchChinesePlayersFromSameLeague(TeamIndex);
-            
+
 
             Dictionary<string, float> LeagueAvg = new Dictionary<string, float>();
             Dictionary<string, float> LeaguePositionCount = new Dictionary<string, float>();
@@ -32,24 +32,41 @@ public class ButtonTransfer : MonoBehaviour
 
             TransferSystem.CalculateLeagueAvg(LeagueAvg, LeaguePositionCount, LeaguePlayers);
             TransferSystem.CalculateLeagueAvg(TeamAvg, TeamPositionCount, TeamPlayers);
-            List<string> PositionsNeeded = TransferSystem.CompareTeamAvgAndLeagueAvg(LeagueAvg,TeamAvg);
+            List<string> PositionsNeeded = TransferSystem.CompareTeamAvgAndLeagueAvg(LeagueAvg, TeamAvg);
             //Debug.Log(PositionsNeeded[0]);
             //Debug.Log(PositionsNeeded[1]);
-            Debug.Log(TeamAvg["前锋"]);
             //Debug.Log(LeagueAvg["前锋"] - TeamAvg["前锋"]); To show that type 1 standard works
 
             List<Player> AllChinesePlayers = StreamingDatabaseManager.GetAllTradableChinesePlayers();
-            LeaguePositionCount = null; //delete League Position Count Dictionary 
-            //delete Team Position Count Dictionary, TeamPositionCount 
+            LeaguePositionCount = null; //delete League Position Count Dictionary
 
-            Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded,AllChinesePlayers,LeagueAvg,TeamAvg,TeamWealth);
-            
-            
-            //Debug.Log(BestPlayers["前锋"].playerName);
-            //Debug.Log(PlayerEvaluater.EvaluatePlayer(BestPlayers["前锋"]));
+            Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded, AllChinesePlayers, LeagueAvg, TeamAvg, TeamWealth);
+            Dictionary<string, float> TypeTwoPositionsNeeded = TransferSystem.ComparePositionAvgAndTeamAvg(TeamPlayers, TeamAvg, TeamPositionCount);
 
+            Dictionary<string, Player> TypeTwoPlayersNeeded = TransferSystem.TypeTwoPlayers(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
+            foreach (KeyValuePair<string, Player> Pair in TypeTwoPlayersNeeded)
+            {
+                Debug.Log(Pair.Key);
+                Debug.Log(Pair.Value);
+
+            }
         }
-            
+        
+
+            //            List<string> KeyList = new List<string>(TypeTwoPositionsNeeded.Keys);
+            //            List<float> ValueList = new List<float>(TypeTwoPositionsNeeded.Values);
+            //           Debug.Log(KeyList[0]);
+            //            Debug.Log(ValueList[0]);
+            //            Debug.Log(TeamAvg["中后卫"]);
+
+
+
+
+            //Debug.Log(BestPlayers["前锋"].playerName);
+            //Debug.Log(PlayerEvaluater.EvaluatePlayer(BestPlayers["门将"]));
+
+        
+
         );
     }
 

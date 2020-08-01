@@ -129,12 +129,18 @@ public class TransferSystem : MonoBehaviour
         return PlayersNeeded;
     }
     //Type2
-    public static List<string> ComparePositionAvgAndTeamAvg(List<Player> TeamPlayers)
+    public static Dictionary<string,float> ComparePositionAvgAndTeamAvg(List<Player> TeamPlayers,Dictionary<string,float> TeamAvg, Dictionary<string, float> TeamPositionCount)
     {
-        List<Player> TempTeamPlayers = TeamPlayers;
+        float ThisPositionScore = 0;
+        float OtherPositionTotalScore = 0;
+        float OtherPositionTotalCount = 0;
+        float OtherPositionAvgScore = 0;
+
+        List <Player> TempTeamPlayers = TeamPlayers;
         Dictionary<string, Player> BestPlayers = new Dictionary<string, Player>();
         Dictionary<string, Player> SecondBestPlayers = new Dictionary<string, Player>();
         Dictionary<Player,float> PlayerScoreDict = new Dictionary<Player,float>();
+        Dictionary<string, float> Result = new Dictionary<string, float>();
         foreach (Player player in TeamPlayers) {
             float PlayerScore = PlayerEvaluater.EvaluatePlayer(player);
             PlayerScoreDict.Add(player,PlayerScore);
@@ -175,16 +181,79 @@ public class TransferSystem : MonoBehaviour
 
         }
 
-        List<string> result = new List<string>();
-        return result;
+        foreach (KeyValuePair<string, Player> pair in BestPlayers) {
+            //There is only one player in that direction, in which case average score is the player's score
+            if (!(SecondBestPlayers.ContainsKey(pair.Key)))
+            {
+                ThisPositionScore = PlayerScoreDict[pair.Value];
+            }
+            else {
+                ThisPositionScore = (PlayerScoreDict[pair.Value] + PlayerScoreDict[SecondBestPlayers[pair.Key]])/2;
+            } 
+            foreach (KeyValuePair<string, float> TeamPair in TeamAvg) {
+                if (TeamPair.Key != pair.Key) { //not the same position
+                    OtherPositionTotalScore += TeamPair.Value * TeamPositionCount[TeamPair.Key];
+                    OtherPositionTotalCount += TeamPositionCount[TeamPair.Key];
+                }
+            }
+            
+            OtherPositionAvgScore = OtherPositionTotalScore / OtherPositionTotalCount;
+            
+            if (ThisPositionScore < OtherPositionAvgScore) {
+                Result.Add(pair.Key, OtherPositionAvgScore);
+            }
+
+        }
+        return Result;
     }
-        //Type3
+    public static Dictionary<string, Player> TypeTwoPlayers(Dictionary<string, float> PositionsNeeded, List<Player> AllChinesePlayers, int TeamWealth)
+    {
+        Dictionary<string, Player> PlayersNeeded = new Dictionary<string, Player>();
+        if (PositionsNeeded.Count > 0)
+        {
+            foreach (Player player in AllChinesePlayers)
+            {
+                if (PositionsNeeded.ContainsKey(player.position))
+                {
+                    float evaluation = PlayerEvaluater.EvaluatePlayer(player);
+                    int TransferBaseFee = PlayerEvaluater.EvaluatePlayerTransferFee(player);
 
+                    if (!(PlayersNeeded.ContainsKey(player.position)))//if there is no such position in PlayersNeeded
+                    {
+                        if ((evaluation > PositionsNeeded[player.position])&& (TeamWealth >= 1.5 * TransferBaseFee))
+                        {
+                                PlayersNeeded.Add(player.position, player);
+                                continue;
+                        }
+                    }
+                    else{
+                        if ((evaluation > PositionsNeeded[player.position]) && (TeamWealth >= 1.5 * TransferBaseFee))
+                            {
+                            int TransferBaseFeeSoFar = PlayerEvaluater.EvaluatePlayerTransferFee(PlayersNeeded[player.position]);
+                            if (TransferBaseFee < TransferBaseFeeSoFar)
+                                {
+                                PlayersNeeded[player.position] = player;
+                                }
+                            }
+                        }
+                    }
 
-
-
-        //TODO: A function that takes 3 dictionaries and decide which players to buy(based on need, maybe an Array to Queue)
-
-
-
+                }
+            }
+        
+        return PlayersNeeded;
     }
+
+
+
+
+    //Type3
+
+
+
+
+    //TODO: A function that takes 3 dictionaries and decide which players to buy(based on need, maybe an Array to Queue)
+
+
+
+}
