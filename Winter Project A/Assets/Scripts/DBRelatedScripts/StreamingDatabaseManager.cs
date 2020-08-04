@@ -599,8 +599,7 @@ public class StreamingDatabaseManager
             }
         }
         return GetMultiplePlayers(ids);
-    
-}
+    }
     public static int  GetTeamWealth(int TeamID)
     {
         //string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = 3);");
@@ -624,5 +623,11 @@ public class StreamingDatabaseManager
         }
         return TeamWealth;
     }
+
+
+
+
+
+
 }
 

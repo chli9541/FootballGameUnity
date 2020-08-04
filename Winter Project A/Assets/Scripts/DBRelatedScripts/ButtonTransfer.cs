@@ -38,19 +38,27 @@ public class ButtonTransfer : MonoBehaviour
             //Debug.Log(LeagueAvg["前锋"] - TeamAvg["前锋"]); To show that type 1 standard works
 
             List<Player> AllChinesePlayers = StreamingDatabaseManager.GetAllTradableChinesePlayers();
-            LeaguePositionCount = null; //delete League Position Count Dictionary
+            
 
             Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded, AllChinesePlayers, LeagueAvg, TeamAvg, TeamWealth);
+
             Dictionary<string, float> TypeTwoPositionsNeeded = TransferSystem.ComparePositionAvgAndTeamAvg(TeamPlayers, TeamAvg, TeamPositionCount);
-
-            Dictionary<string, Player> TypeTwoPlayersNeeded = TransferSystem.TypeTwoPlayers(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
-            foreach (KeyValuePair<string, Player> Pair in TypeTwoPlayersNeeded)
-            {
+            Dictionary<string, Player> TypeTwoPlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
+            Dictionary<string, float> TypeThreePositionsNeeded = TransferSystem.FindPositionsLackingInTheTeam(TeamPositionCount,LeagueAvg);
+            Dictionary<string, Player> TypeThreePlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeThreePositionsNeeded, AllChinesePlayers, TeamWealth);
+            /*
+            foreach (KeyValuePair<string, Player> Pair in TypeThreePlayersNeeded) {
                 Debug.Log(Pair.Key);
-                Debug.Log(Pair.Value);
-
+                Debug.Log(Pair.Value.playerName);
+                Debug.Log(PlayerEvaluater.EvaluatePlayer(Pair.Value));
             }
+            */
+            float TotalAvg = TransferSystem.GetTeamTotalAvg(TeamPlayers);
+            Debug.Log(TotalAvg);
+           
+
         }
+        
         
 
             //            List<string> KeyList = new List<string>(TypeTwoPositionsNeeded.Keys);

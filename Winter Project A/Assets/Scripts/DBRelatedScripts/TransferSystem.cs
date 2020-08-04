@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class TransferSystem : MonoBehaviour
 {
-    
-    
+
+
     /*    
         public static Dictionary<string,float> InitializeLeagueAvg() {
             Dictionary<string,float> LeagueAvg = new Dictionary<string, float>();
-            LeagueAvg.Add("左边前卫", 0);
-            LeagueAvg.Add("右边前卫", 0);
+            LeagueAvg.Add("左边前卫", 0); "左边前卫","右边前卫","左边卫","右边卫","左边锋","右边锋","中锋","前锋","前腰","中前卫","后腰","中后卫","门将"
+            LeagueAvg.Add("右边前卫", 0); 
             LeagueAvg.Add("左边卫", 0);
             LeagueAvg.Add("右边卫", 0);
             LeagueAvg.Add("左边锋", 0);
@@ -206,7 +206,7 @@ public class TransferSystem : MonoBehaviour
         }
         return Result;
     }
-    public static Dictionary<string, Player> TypeTwoPlayers(Dictionary<string, float> PositionsNeeded, List<Player> AllChinesePlayers, int TeamWealth)
+    public static Dictionary<string, Player> TypeTwoAndThreePlayers(Dictionary<string, float> PositionsNeeded, List<Player> AllChinesePlayers, int TeamWealth)
     {
         Dictionary<string, Player> PlayersNeeded = new Dictionary<string, Player>();
         if (PositionsNeeded.Count > 0)
@@ -243,6 +243,115 @@ public class TransferSystem : MonoBehaviour
         
         return PlayersNeeded;
     }
+
+    public static Dictionary<string, float> FindPositionsLackingInTheTeam(Dictionary<string, float> TeamPosCount, Dictionary<string, float> LeagueAvg) {
+        List<string> PositionList = new List<string> { "左边前卫", "右边前卫", "左边卫", "右边卫", "左边锋", "右边锋", "前锋", "前腰", "中前卫", "后腰", "中后卫", "门将" }; //Here 中锋 is not included
+        List<string> TempPositionLacking = new List<string>();
+        Dictionary<string, float> result = new Dictionary<string, float>();
+        foreach (string Position in PositionList) {
+            if (!(TeamPosCount.ContainsKey(Position))) {
+                TempPositionLacking.Add(Position);
+            }
+        }
+        //decide which ones to add to result list
+        if (TempPositionLacking.Contains("门将")) {
+            result.Add("门将",LeagueAvg["门将"]);
+        }
+
+        if (TempPositionLacking.Contains("左边前卫") && (TempPositionLacking.Contains("左边锋")))
+        {
+            List<string> RandomList = new List<string> {"左边前卫", "左边锋"};
+            int RandomIndex = Random.Range(-1,1);
+            if (RandomIndex < 0)
+            {
+                result.Add(RandomList[0], LeagueAvg[RandomList[0]]);
+            }
+            else {
+                result.Add(RandomList[1], LeagueAvg[RandomList[1]]);
+            }
+        }
+        if (TempPositionLacking.Contains("右边前卫") && (TempPositionLacking.Contains("右边锋")))
+        {
+            List<string> RandomList = new List<string> {"右边前卫", "右边锋"};
+            int RandomIndex = Random.Range(-1, 1);
+            if (RandomIndex < 0)
+            {
+                result.Add(RandomList[0], LeagueAvg[RandomList[0]]);
+            }
+            else
+            {
+                result.Add(RandomList[1], LeagueAvg[RandomList[1]]);
+            }
+        }
+        if (TempPositionLacking.Contains("前腰") && (TempPositionLacking.Contains("后腰")) && (TempPositionLacking.Contains("中前卫")))
+        {
+            List<string> RandomList = new List<string> {"前腰", "中前卫", "后腰"};
+            int RandomIndex = Random.Range(0, 3);
+            if (RandomIndex < 1)
+            {
+                result.Add(RandomList[0], LeagueAvg[RandomList[0]]);
+            }
+            else if (RandomIndex < 2)
+            {
+                result.Add(RandomList[1], LeagueAvg[RandomList[1]]);
+            }
+            else
+            {
+                result.Add(RandomList[2], LeagueAvg[RandomList[2]]);
+            }
+        }
+
+
+        if (TempPositionLacking.Contains("前锋"))
+        {
+            result.Add("前锋", LeagueAvg["前锋"]);
+        }
+        if (TempPositionLacking.Contains("中后卫"))
+        {
+            result.Add("中后卫", LeagueAvg["中后卫"]);
+        }
+        if (TempPositionLacking.Contains("左边卫"))
+        {
+            result.Add("左边卫", LeagueAvg["左边卫"]);
+        }
+        if (TempPositionLacking.Contains("右边卫"))
+        {
+            result.Add("右边卫", LeagueAvg["右边卫"]);
+        }
+
+        return result;
+
+    }
+
+    public static bool IfNeedAgeTransfer(List<Player> TeamPlayers) {
+        bool result = false;
+        float TotalAge = 0;
+        foreach (Player player in TeamPlayers) {
+            TotalAge += player.GetAge();
+        }
+        if ((TotalAge/TeamPlayers.Count)>27) {
+            result = false;
+        }
+
+
+
+        return result;
+    }
+
+    public static float GetTeamTotalAvg(List<Player> TeamPlayers)
+    {
+        float TotalEvaluation = 0;
+        foreach (Player player in TeamPlayers)
+        {
+            TotalEvaluation += PlayerEvaluater.EvaluatePlayer(player);
+        }
+        
+        return TotalEvaluation/TeamPlayers.Count;
+    }
+
+
+
+
 
 
 
