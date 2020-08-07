@@ -32,20 +32,17 @@ public class ButtonTransfer : MonoBehaviour
 
             TransferSystem.CalculateLeagueAvg(LeagueAvg, LeaguePositionCount, LeaguePlayers);
             TransferSystem.CalculateLeagueAvg(TeamAvg, TeamPositionCount, TeamPlayers);
-            List<string> PositionsNeeded = TransferSystem.CompareTeamAvgAndLeagueAvg(LeagueAvg, TeamAvg);
-            //Debug.Log(PositionsNeeded[0]);
-            //Debug.Log(PositionsNeeded[1]);
-            //Debug.Log(LeagueAvg["前锋"] - TeamAvg["前锋"]); To show that type 1 standard works
-
-            List<Player> AllChinesePlayers = StreamingDatabaseManager.GetAllTradableChinesePlayers();
+            
             
 
-            Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded, AllChinesePlayers, LeagueAvg, TeamAvg, TeamWealth);
+            List<Player> AllChinesePlayers = StreamingDatabaseManager.GetAllTradableChinesePlayers();
 
+            List<string> PositionsNeeded = TransferSystem.CompareTeamAvgAndLeagueAvg(LeagueAvg, TeamAvg);
+            Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded, AllChinesePlayers, LeagueAvg, TeamAvg, TeamWealth);
             Dictionary<string, float> TypeTwoPositionsNeeded = TransferSystem.ComparePositionAvgAndTeamAvg(TeamPlayers, TeamAvg, TeamPositionCount);
-            Dictionary<string, Player> TypeTwoPlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
             Dictionary<string, float> TypeThreePositionsNeeded = TransferSystem.FindPositionsLackingInTheTeam(TeamPositionCount,LeagueAvg);
             Dictionary<string, Player> TypeThreePlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeThreePositionsNeeded, AllChinesePlayers, TeamWealth);
+            Dictionary<string, Player> TypeTwoPlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
             /*
             foreach (KeyValuePair<string, Player> Pair in TypeThreePlayersNeeded) {
                 Debug.Log(Pair.Key);
@@ -53,9 +50,13 @@ public class ButtonTransfer : MonoBehaviour
                 Debug.Log(PlayerEvaluater.EvaluatePlayer(Pair.Value));
             }
             */
-            float TotalAvg = TransferSystem.GetTeamTotalAvg(TeamPlayers);
-            Debug.Log(TotalAvg);
-           
+            Dictionary<string, Player> AgeTransferPlayersNeeded = TransferSystem.GetAgeTransferPlayers(TeamPlayers,AllChinesePlayers,TeamWealth);
+            foreach (KeyValuePair<string, Player> Pair in AgeTransferPlayersNeeded)
+            {
+                Debug.Log(Pair.Key);
+                Debug.Log(Pair.Value.GetAge());
+                Debug.Log(PlayerEvaluater.EvaluatePlayer(Pair.Value));
+            }
 
         }
         
@@ -77,6 +78,7 @@ public class ButtonTransfer : MonoBehaviour
 
         );
     }
+    
 
 
     // Update is called once per frame

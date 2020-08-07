@@ -323,22 +323,16 @@ public class TransferSystem : MonoBehaviour
 
     }
 
-    public static bool IfNeedAgeTransfer(List<Player> TeamPlayers) {
-        bool result = false;
+    public static float GetTeamAvgAge(List<Player> TeamPlayers) {
         float TotalAge = 0;
         foreach (Player player in TeamPlayers) {
             TotalAge += player.GetAge();
         }
-        if ((TotalAge/TeamPlayers.Count)>27) {
-            result = false;
-        }
-
-
-
-        return result;
+            
+        return TotalAge/TeamPlayers.Count;
     }
 
-    public static float GetTeamTotalAvg(List<Player> TeamPlayers)
+    public static float GetTeamAvgEvaluation(List<Player> TeamPlayers)
     {
         float TotalEvaluation = 0;
         foreach (Player player in TeamPlayers)
@@ -348,6 +342,81 @@ public class TransferSystem : MonoBehaviour
         
         return TotalEvaluation/TeamPlayers.Count;
     }
+    public static Dictionary<string, Player> GetAgeTransferPlayers(List<Player> TeamPlayers, List<Player> AllChinesePlayers, int TeamWealth) {
+        float TeamAvgAge = GetTeamAvgAge(TeamPlayers);
+        float TeamAvgEvaluation = GetTeamAvgEvaluation(TeamPlayers);
+        Dictionary<string, Player> Result = new Dictionary<string, Player>();
+        if (TeamAvgAge > 27) {
+            foreach (Player player in AllChinesePlayers) {
+                float evaluation = PlayerEvaluater.EvaluatePlayer(player);
+                int TransferBaseFee = PlayerEvaluater.EvaluatePlayerTransferFee(player);
+                if ((TransferBaseFee < TeamWealth)&&((float)player.GetAge() < (TeamAvgAge*0.9))&&(evaluation > (TeamAvgEvaluation * 0.9))) {
+                    if (!(Result.ContainsKey(player.position)))
+                    {
+                        Result.Add(player.position, player);
+                    }
+                    else {
+                        Result[player.position] = player;
+                    }
+                }
+            }
+        }
+        return Result;
+    }
+
+    public static List<string> GenerateOptimalStartingLineup(Club target, int[] droppableIndices = null)
+    {
+        if (droppableIndices == null)
+            droppableIndices = new int[] { 0, 1, 3, 4, 5, 13, 14, 16, 15, 22, 23 };
+        string[] formationList = new string[] { "门将", "左边卫", "中后卫", "中后卫", "右边卫", "左边前卫", "中前卫", "中前卫", "右边前卫", "前锋", "前锋" };
+        var list = new List<Player>();
+        var temp = new List<Player>();
+
+        foreach (var v in target.players)
+        {
+            temp.Add(v);
+        }
+
+        foreach (var pos in formationList)
+        {
+            var l = new List<Player>();
+            foreach (var v in temp)
+            {
+                if (v.position == pos)
+                    l.Add(v);
+            }
+            l.Sort(new PlayerEvaluater.AbilityBasedPlayerDescendingComparer());
+            if (l.Count > 0)
+            {
+                list.Add(l[0]);
+                temp.Remove(l[0]);
+            }
+        }
+
+        temp.Sort(new PlayerEvaluater.AttackingAbilityBasedPlayerDescendingComparer());
+        int idx = 0;
+        while (list.Count < 11)
+        {
+            if (temp[idx].position != "门将")
+                list.Add(temp[idx++]);
+        }
+
+        List<string> ret = new List<string>();
+
+        for (int i = 0; i < 24; i++)
+        {
+            ret.Add(null);
+        }
+
+
+        for (int i = 0; i < droppableIndices.Length; i++)
+        {
+            ret[droppableIndices[i]] = list[i].ID + ",0";
+            Debug.Log(ret[droppableIndices[i]]);
+        }
+
+        return ret;
+    }
 
 
 
@@ -356,12 +425,8 @@ public class TransferSystem : MonoBehaviour
 
 
 
-    //Type3
 
 
-
-
-    //TODO: A function that takes 3 dictionaries and decide which players to buy(based on need, maybe an Array to Queue)
 
 
 
