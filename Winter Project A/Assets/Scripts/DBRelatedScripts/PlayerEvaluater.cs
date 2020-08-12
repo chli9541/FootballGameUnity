@@ -372,6 +372,7 @@ public class PlayerEvaluater : MonoBehaviour {
         return (int)(eval);
     }
 
+
     public class GoalsBasedPlayerDescendingComparer : IComparer<Player>
     {
         public int Compare(Player x, Player y)
@@ -395,9 +396,38 @@ public class PlayerEvaluater : MonoBehaviour {
             return x.GetAge() - y.GetAge();
         }
     }
-    
 
 
+    public class AbilityBasedPlayerComparer : IComparer<Player>
+    {
+        public int Compare(Player x, Player y)
+        {
+            return (int)EvaluatePlayer(x) - (int)EvaluatePlayer(y);
+        }
+    }
 
+    public class AbilityBasedPlayerDescendingComparer : IComparer<Player>
+    {
+        public int Compare(Player x, Player y)
+        {
+            return (int)EvaluatePlayer(y) - (int)EvaluatePlayer(x);
+        }
+    }
+
+    public class AttackingAbilityBasedPlayerDescendingComparer : IComparer<Player>
+    {
+        public int Compare(Player x, Player y)
+        {
+            return (int)EvaluateST(y) - (int)EvaluateST(x);
+        }
+    }
+
+    public class PassingAbilityBasedPlayerDescendingComparer : IComparer<Player>
+    {
+        public int Compare(Player x, Player y)
+        {
+            return (int)EvaluateAM(y) - (int)EvaluateAM(x);
+        }
+    }
 
 }

@@ -206,7 +206,7 @@ public class TransferSystem : MonoBehaviour
         }
         return Result;
     }
-    public static Dictionary<string, Player> TypeTwoAndThreePlayers(Dictionary<string, float> PositionsNeeded, List<Player> AllChinesePlayers, int TeamWealth)
+    public static Dictionary<string, Player> GetTransfersByPosEval(Dictionary<string, float> PositionsNeeded, List<Player> AllChinesePlayers, int TeamWealth)
     {
         Dictionary<string, Player> PlayersNeeded = new Dictionary<string, Player>();
         if (PositionsNeeded.Count > 0)
@@ -331,7 +331,7 @@ public class TransferSystem : MonoBehaviour
             
         return TotalAge/TeamPlayers.Count;
     }
-
+    //this function calculates list<player> avg evaluation
     public static float GetTeamAvgEvaluation(List<Player> TeamPlayers)
     {
         float TotalEvaluation = 0;
@@ -342,6 +342,7 @@ public class TransferSystem : MonoBehaviour
         
         return TotalEvaluation/TeamPlayers.Count;
     }
+
     public static Dictionary<string, Player> GetAgeTransferPlayers(List<Player> TeamPlayers, List<Player> AllChinesePlayers, int TeamWealth) {
         float TeamAvgAge = GetTeamAvgAge(TeamPlayers);
         float TeamAvgEvaluation = GetTeamAvgEvaluation(TeamPlayers);
@@ -364,7 +365,7 @@ public class TransferSystem : MonoBehaviour
         return Result;
     }
 
-    public static List<string> GenerateOptimalStartingLineup(Club target, int[] droppableIndices = null)
+    public static List<string> GenerateOptimalStartingLineup(List<Player> TeamPlayers, int[] droppableIndices = null)
     {
         if (droppableIndices == null)
             droppableIndices = new int[] { 0, 1, 3, 4, 5, 13, 14, 16, 15, 22, 23 };
@@ -372,9 +373,9 @@ public class TransferSystem : MonoBehaviour
         var list = new List<Player>();
         var temp = new List<Player>();
 
-        foreach (var v in target.players)
+        foreach (Player player in TeamPlayers)
         {
-            temp.Add(v);
+            temp.Add(player);
         }
 
         foreach (var pos in formationList)
@@ -417,6 +418,80 @@ public class TransferSystem : MonoBehaviour
 
         return ret;
     }
+
+
+    public static bool NeedKeyPlayerSubstituteHelper(KeyValuePair<Player, float> pair, Dictionary<Player, float> temp) {
+        bool result = true;
+        foreach (KeyValuePair<Player, float> TempPair in temp) {
+            if (pair.Key.position == TempPair.Key.position) {
+                if (TempPair.Value > pair.Value*0.9) {
+                    result = false;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static void AddKeyPlayersHelper(Dictionary<string, float> result, Dictionary<Player, float> temp, float threshold)
+    {
+        foreach (KeyValuePair<Player, float> pair in temp)
+        {
+            if ((pair.Value > threshold) && (NeedKeyPlayerSubstituteHelper(pair,temp)))
+            {
+                result.Add(pair.Key.position, pair.Value* (float)0.9);
+            }
+        }
+    }
+
+    public static Dictionary<string, float> KeyPlayerSubstitution(List<Player> TeamPlayers) {
+        Dictionary<string, float> result = new Dictionary<string, float>();
+        Dictionary<Player, float> temp = new Dictionary<Player, float>();
+        foreach (Player player in TeamPlayers) {
+            temp.Add(player,PlayerEvaluater.EvaluatePlayer(player));
+        }
+        float TeamAvgEvaluation = GetTeamAvgEvaluation(TeamPlayers);
+
+        if (TeamAvgEvaluation > 83)
+        {
+            return result;
+        }
+        else if (TeamAvgEvaluation > 79)
+        {
+            AddKeyPlayersHelper(result, temp, 88);
+            return result;
+        }
+        else if (TeamAvgEvaluation > 74)
+        {
+            AddKeyPlayersHelper(result, temp, 83);
+            return result;
+        }
+        else if (TeamAvgEvaluation > 69)
+        {
+            AddKeyPlayersHelper(result, temp, 79);
+            return result;
+        }
+        else if (TeamAvgEvaluation > 59)
+        {
+            AddKeyPlayersHelper(result, temp, 75);
+            return result;
+        }
+        else if (TeamAvgEvaluation > 49)
+        {
+            AddKeyPlayersHelper(result, temp, 67);
+            return result;
+        }
+        else {
+            return result;
+        }
+    }
+
+
+    //TODO: split team starting line up age >28
+    //TODO: list<keyvaluepair> to determine which players to buy
+    //TODO: SQL
+
+
+
 
 
 

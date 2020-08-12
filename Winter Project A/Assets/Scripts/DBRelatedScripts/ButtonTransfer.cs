@@ -41,8 +41,8 @@ public class ButtonTransfer : MonoBehaviour
             Dictionary<string, Player> TypeOneTransfer = TransferSystem.TypeOnePlayers(PositionsNeeded, AllChinesePlayers, LeagueAvg, TeamAvg, TeamWealth);
             Dictionary<string, float> TypeTwoPositionsNeeded = TransferSystem.ComparePositionAvgAndTeamAvg(TeamPlayers, TeamAvg, TeamPositionCount);
             Dictionary<string, float> TypeThreePositionsNeeded = TransferSystem.FindPositionsLackingInTheTeam(TeamPositionCount,LeagueAvg);
-            Dictionary<string, Player> TypeThreePlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeThreePositionsNeeded, AllChinesePlayers, TeamWealth);
-            Dictionary<string, Player> TypeTwoPlayersNeeded = TransferSystem.TypeTwoAndThreePlayers(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
+            Dictionary<string, Player> TypeThreeTransfer = TransferSystem.GetTransfersByPosEval(TypeThreePositionsNeeded, AllChinesePlayers, TeamWealth);
+            Dictionary<string, Player> TypeTwoTransfer = TransferSystem.GetTransfersByPosEval(TypeTwoPositionsNeeded, AllChinesePlayers, TeamWealth);
             /*
             foreach (KeyValuePair<string, Player> Pair in TypeThreePlayersNeeded) {
                 Debug.Log(Pair.Key);
@@ -51,30 +51,46 @@ public class ButtonTransfer : MonoBehaviour
             }
             */
             Dictionary<string, Player> AgeTransferPlayersNeeded = TransferSystem.GetAgeTransferPlayers(TeamPlayers,AllChinesePlayers,TeamWealth);
-            foreach (KeyValuePair<string, Player> Pair in AgeTransferPlayersNeeded)
+            List<string>StartingTeam = TransferSystem.GenerateOptimalStartingLineup(TeamPlayers);
+            Dictionary<string, float> KeyPlayerTransfer = TransferSystem.KeyPlayerSubstitution(TeamPlayers);
+            Dictionary<string, Player> KeyPlayerTransferNeeded = TransferSystem.GetTransfersByPosEval(KeyPlayerTransfer,AllChinesePlayers,TeamWealth);
+
+
+            foreach (KeyValuePair<string, Player> Pair in KeyPlayerTransferNeeded)
             {
                 Debug.Log(Pair.Key);
-                Debug.Log(Pair.Value.GetAge());
+                Debug.Log(Pair.Value.playerName);
                 Debug.Log(PlayerEvaluater.EvaluatePlayer(Pair.Value));
             }
 
+
+
+
+
+
+
+
+
+
+
         }
         
-        
-
-            //            List<string> KeyList = new List<string>(TypeTwoPositionsNeeded.Keys);
-            //            List<float> ValueList = new List<float>(TypeTwoPositionsNeeded.Values);
-            //           Debug.Log(KeyList[0]);
-            //            Debug.Log(ValueList[0]);
-            //            Debug.Log(TeamAvg["中后卫"]);
 
 
 
+        //            List<string> KeyList = new List<string>(TypeTwoPositionsNeeded.Keys);
+        //            List<float> ValueList = new List<float>(TypeTwoPositionsNeeded.Values);
+        //           Debug.Log(KeyList[0]);
+        //            Debug.Log(ValueList[0]);
+        //            Debug.Log(TeamAvg["中后卫"]);
 
-            //Debug.Log(BestPlayers["前锋"].playerName);
-            //Debug.Log(PlayerEvaluater.EvaluatePlayer(BestPlayers["门将"]));
 
-        
+
+
+        //Debug.Log(BestPlayers["前锋"].playerName);
+        //Debug.Log(PlayerEvaluater.EvaluatePlayer(BestPlayers["门将"]));
+
+
 
         );
     }
