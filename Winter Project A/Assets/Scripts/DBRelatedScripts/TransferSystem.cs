@@ -52,12 +52,12 @@ public class TransferSystem : MonoBehaviour
             }
         }
     }
-            //Right now we only make Chinese Players transfer system
+    //Right now we only make Chinese Players transfer system
 
     public static void CalculateLeagueAvg(Dictionary<string, float> LeagueAvg, Dictionary<string, float> PositionCount, List<Player> players) {
         foreach (Player player in players) {
             //if key does not exist, create a new one
-            if (!(LeagueAvg.ContainsKey(player.position))){
+            if (!(LeagueAvg.ContainsKey(player.position))) {
                 PositionCount.Add(player.position, 0);
                 LeagueAvg.Add(player.position, 0);
             }
@@ -80,7 +80,7 @@ public class TransferSystem : MonoBehaviour
         {
             if (LeagueAvg[PositionScore.Key] - PositionScore.Value > 3) //League average is bigger than team average for more than 3 points
             {
-                 PositionsNeeded.Add(PositionScore.Key);
+                PositionsNeeded.Add(PositionScore.Key);
             }
         }
         return PositionsNeeded;
@@ -88,7 +88,7 @@ public class TransferSystem : MonoBehaviour
     //Type1
     public static Dictionary<string, Player> TypeOnePlayers(List<string> PositionsNeeded, List<Player> AllChinesePlayers, Dictionary<string, float> LeagueAvg, Dictionary<string, float> TeamAvg, int TeamWealth) {
         Dictionary<string, Player> PlayersNeeded = new Dictionary<string, Player>();
-        if(PositionsNeeded.Count > 0){
+        if (PositionsNeeded.Count > 0) {
             foreach (Player player in AllChinesePlayers)
             {
                 if (PositionsNeeded.Contains(player.position))
@@ -114,10 +114,10 @@ public class TransferSystem : MonoBehaviour
                         if ((evaluation >= (LeagueAvg[player.position] * 0.9)) && (evaluation <= (LeagueAvg[player.position] * 1.1)) && (TeamWealth >= 1.5 * TransferBaseFee))
                         {
 
-                        int TransferBaseFeeSoFar = PlayerEvaluater.EvaluatePlayerTransferFee(PlayersNeeded[player.position]);
-                        if (TransferBaseFee < TransferBaseFeeSoFar)
+                            int TransferBaseFeeSoFar = PlayerEvaluater.EvaluatePlayerTransferFee(PlayersNeeded[player.position]);
+                            if (TransferBaseFee < TransferBaseFeeSoFar)
                             {
-                            PlayersNeeded[player.position] = player;
+                                PlayersNeeded[player.position] = player;
                             }
 
                         }
@@ -129,23 +129,23 @@ public class TransferSystem : MonoBehaviour
         return PlayersNeeded;
     }
     //Type2
-    public static Dictionary<string,float> ComparePositionAvgAndTeamAvg(List<Player> TeamPlayers,Dictionary<string,float> TeamAvg, Dictionary<string, float> TeamPositionCount)
+    public static Dictionary<string, float> ComparePositionAvgAndTeamAvg(List<Player> TeamPlayers, Dictionary<string, float> TeamAvg, Dictionary<string, float> TeamPositionCount)
     {
         float ThisPositionScore = 0;
         float OtherPositionTotalScore = 0;
         float OtherPositionTotalCount = 0;
         float OtherPositionAvgScore = 0;
 
-        List <Player> TempTeamPlayers = TeamPlayers;
+        List<Player> TempTeamPlayers = TeamPlayers;
         Dictionary<string, Player> BestPlayers = new Dictionary<string, Player>();
         Dictionary<string, Player> SecondBestPlayers = new Dictionary<string, Player>();
-        Dictionary<Player,float> PlayerScoreDict = new Dictionary<Player,float>();
+        Dictionary<Player, float> PlayerScoreDict = new Dictionary<Player, float>();
         Dictionary<string, float> Result = new Dictionary<string, float>();
         foreach (Player player in TeamPlayers) {
             float PlayerScore = PlayerEvaluater.EvaluatePlayer(player);
-            PlayerScoreDict.Add(player,PlayerScore);
+            PlayerScoreDict.Add(player, PlayerScore);
         }
-        
+
         foreach (Player player in TempTeamPlayers)
         {
 
@@ -188,17 +188,17 @@ public class TransferSystem : MonoBehaviour
                 ThisPositionScore = PlayerScoreDict[pair.Value];
             }
             else {
-                ThisPositionScore = (PlayerScoreDict[pair.Value] + PlayerScoreDict[SecondBestPlayers[pair.Key]])/2;
-            } 
+                ThisPositionScore = (PlayerScoreDict[pair.Value] + PlayerScoreDict[SecondBestPlayers[pair.Key]]) / 2;
+            }
             foreach (KeyValuePair<string, float> TeamPair in TeamAvg) {
                 if (TeamPair.Key != pair.Key) { //not the same position
                     OtherPositionTotalScore += TeamPair.Value * TeamPositionCount[TeamPair.Key];
                     OtherPositionTotalCount += TeamPositionCount[TeamPair.Key];
                 }
             }
-            
+
             OtherPositionAvgScore = OtherPositionTotalScore / OtherPositionTotalCount;
-            
+
             if (ThisPositionScore < OtherPositionAvgScore) {
                 Result.Add(pair.Key, OtherPositionAvgScore);
             }
@@ -220,27 +220,27 @@ public class TransferSystem : MonoBehaviour
 
                     if (!(PlayersNeeded.ContainsKey(player.position)))//if there is no such position in PlayersNeeded
                     {
-                        if ((evaluation > PositionsNeeded[player.position])&& (TeamWealth >= 1.5 * TransferBaseFee))
+                        if ((evaluation > PositionsNeeded[player.position]) && (TeamWealth >= 1.5 * TransferBaseFee))
                         {
-                                PlayersNeeded.Add(player.position, player);
-                                continue;
+                            PlayersNeeded.Add(player.position, player);
+                            continue;
                         }
                     }
-                    else{
+                    else {
                         if ((evaluation > PositionsNeeded[player.position]) && (TeamWealth >= 1.5 * TransferBaseFee))
-                            {
+                        {
                             int TransferBaseFeeSoFar = PlayerEvaluater.EvaluatePlayerTransferFee(PlayersNeeded[player.position]);
                             if (TransferBaseFee < TransferBaseFeeSoFar)
-                                {
+                            {
                                 PlayersNeeded[player.position] = player;
-                                }
                             }
                         }
                     }
-
                 }
+
             }
-        
+        }
+
         return PlayersNeeded;
     }
 
@@ -255,13 +255,13 @@ public class TransferSystem : MonoBehaviour
         }
         //decide which ones to add to result list
         if (TempPositionLacking.Contains("门将")) {
-            result.Add("门将",LeagueAvg["门将"]);
+            result.Add("门将", LeagueAvg["门将"]);
         }
 
         if (TempPositionLacking.Contains("左边前卫") && (TempPositionLacking.Contains("左边锋")))
         {
-            List<string> RandomList = new List<string> {"左边前卫", "左边锋"};
-            int RandomIndex = Random.Range(-1,1);
+            List<string> RandomList = new List<string> { "左边前卫", "左边锋" };
+            int RandomIndex = Random.Range(-1, 1);
             if (RandomIndex < 0)
             {
                 result.Add(RandomList[0], LeagueAvg[RandomList[0]]);
@@ -272,7 +272,7 @@ public class TransferSystem : MonoBehaviour
         }
         if (TempPositionLacking.Contains("右边前卫") && (TempPositionLacking.Contains("右边锋")))
         {
-            List<string> RandomList = new List<string> {"右边前卫", "右边锋"};
+            List<string> RandomList = new List<string> { "右边前卫", "右边锋" };
             int RandomIndex = Random.Range(-1, 1);
             if (RandomIndex < 0)
             {
@@ -285,7 +285,7 @@ public class TransferSystem : MonoBehaviour
         }
         if (TempPositionLacking.Contains("前腰") && (TempPositionLacking.Contains("后腰")) && (TempPositionLacking.Contains("中前卫")))
         {
-            List<string> RandomList = new List<string> {"前腰", "中前卫", "后腰"};
+            List<string> RandomList = new List<string> { "前腰", "中前卫", "后腰" };
             int RandomIndex = Random.Range(0, 3);
             if (RandomIndex < 1)
             {
@@ -328,8 +328,8 @@ public class TransferSystem : MonoBehaviour
         foreach (Player player in TeamPlayers) {
             TotalAge += player.GetAge();
         }
-            
-        return TotalAge/TeamPlayers.Count;
+
+        return TotalAge / TeamPlayers.Count;
     }
     //this function calculates list<player> avg evaluation
     public static float GetTeamAvgEvaluation(List<Player> TeamPlayers)
@@ -339,26 +339,30 @@ public class TransferSystem : MonoBehaviour
         {
             TotalEvaluation += PlayerEvaluater.EvaluatePlayer(player);
         }
-        
-        return TotalEvaluation/TeamPlayers.Count;
+
+        return TotalEvaluation / TeamPlayers.Count;
     }
 
     public static Dictionary<string, Player> GetAgeTransferPlayers(List<Player> TeamPlayers, List<Player> AllChinesePlayers, int TeamWealth) {
         float TeamAvgAge = GetTeamAvgAge(TeamPlayers);
         float TeamAvgEvaluation = GetTeamAvgEvaluation(TeamPlayers);
         Dictionary<string, Player> Result = new Dictionary<string, Player>();
-        if (TeamAvgAge > 27) {
+        List<Player> StartingLineUp = GetStartingLineUpPlayers(TeamPlayers);
+        float StartingAvgAge = GetTeamAvgAge(StartingLineUp);
+        if ((TeamAvgAge > 27)&&(StartingAvgAge > 28)) {
             foreach (Player player in AllChinesePlayers) {
                 float evaluation = PlayerEvaluater.EvaluatePlayer(player);
                 int TransferBaseFee = PlayerEvaluater.EvaluatePlayerTransferFee(player);
-                if ((TransferBaseFee < TeamWealth)&&((float)player.GetAge() < (TeamAvgAge*0.9))&&(evaluation > (TeamAvgEvaluation * 0.9))) {
+                if ((TeamWealth >= 1.5 * TransferBaseFee) && ((float)player.GetAge() < (TeamAvgAge * 0.9)) && (evaluation > (TeamAvgEvaluation * 0.9))) {
                     if (!(Result.ContainsKey(player.position)))
                     {
                         Result.Add(player.position, player);
                     }
-                    else {
+                    else if(TransferBaseFee < PlayerEvaluater.EvaluatePlayerTransferFee(Result[player.position])) //cheaper than current player in Result dictionary
+                    {
                         Result[player.position] = player;
                     }
+                
                 }
             }
         }
@@ -413,7 +417,7 @@ public class TransferSystem : MonoBehaviour
         for (int i = 0; i < droppableIndices.Length; i++)
         {
             ret[droppableIndices[i]] = list[i].ID + ",0";
-            Debug.Log(ret[droppableIndices[i]]);
+            //Debug.Log(ret[droppableIndices[i]]);
         }
 
         return ret;
@@ -424,7 +428,7 @@ public class TransferSystem : MonoBehaviour
         bool result = true;
         foreach (KeyValuePair<Player, float> TempPair in temp) {
             if (pair.Key.position == TempPair.Key.position) {
-                if (TempPair.Value > pair.Value*0.9) {
+                if (TempPair.Value > pair.Value * 0.9) {
                     result = false;
                 }
             }
@@ -436,18 +440,18 @@ public class TransferSystem : MonoBehaviour
     {
         foreach (KeyValuePair<Player, float> pair in temp)
         {
-            if ((pair.Value > threshold) && (NeedKeyPlayerSubstituteHelper(pair,temp)))
+            if ((pair.Value > threshold) && (NeedKeyPlayerSubstituteHelper(pair, temp)))
             {
-                result.Add(pair.Key.position, pair.Value* (float)0.9);
+                result.Add(pair.Key.position, pair.Value * (float)0.9);
             }
         }
     }
 
-    public static Dictionary<string, float> KeyPlayerSubstitution(List<Player> TeamPlayers) {
+    public static Dictionary<string, float> IfNeedKeyPlayerSub(List<Player> TeamPlayers) {
         Dictionary<string, float> result = new Dictionary<string, float>();
         Dictionary<Player, float> temp = new Dictionary<Player, float>();
         foreach (Player player in TeamPlayers) {
-            temp.Add(player,PlayerEvaluater.EvaluatePlayer(player));
+            temp.Add(player, PlayerEvaluater.EvaluatePlayer(player));
         }
         float TeamAvgEvaluation = GetTeamAvgEvaluation(TeamPlayers);
 
@@ -489,14 +493,74 @@ public class TransferSystem : MonoBehaviour
     //TODO: split team starting line up age >28
     //TODO: list<keyvaluepair> to determine which players to buy
     //TODO: SQL
+    public static List<Player> GetStartingLineUpPlayers(List<Player> Teamplayers)
+    {
+        List<string> StartingLineUpStringList = GenerateOptimalStartingLineup(Teamplayers);
+        List<string> IDList = new List<string>();
+        List<Player> Result = new List<Player>();
+        Dictionary<string,Player> IDDict = new Dictionary<string, Player>();
+        foreach (string str in StartingLineUpStringList) {
+            if (!(str == null)) {
 
+                string[] words = str.Split(',');
+                IDList.Add(words[0]);
+            }
+        }
+        foreach (Player player in Teamplayers) {
+            IDDict.Add(player.ID.ToString(),player);
 
+        }
+        foreach (string str in IDList) {
+            Result.Add(IDDict[str]);
+        }
+        return Result;
+    }
+    public static List<Player> FinalPlayersToBuy(Dictionary<string,Player> TypeOne, Dictionary<string, Player> TypeTwo, Dictionary<string, Player> TypeThree, Dictionary<string, Player> TransferAge, Dictionary<string, Player> TransferKeySub) {
+        List<Player> result = new List<Player>();
+        Dictionary<string, Player> ResultDictionary = new Dictionary<string, Player>();
+        DetermineResultDictHelper(ResultDictionary,TypeOne);
+        DetermineResultDictHelper(ResultDictionary, TypeTwo);
+        DetermineResultDictHelper(ResultDictionary, TypeThree);
+        DetermineResultDictHelper(ResultDictionary, TransferAge);
+        DetermineResultDictHelper(ResultDictionary, TransferKeySub);
+        result = ResultDictionary.Values.ToList(); //after combining each position we know have a list of only one player each position
+        return result;
+    }
 
-
-
-
-
-
+    public static void DetermineResultDictHelper(Dictionary<string, Player> ResultDictionary, Dictionary<string, Player> TransferDict) {
+        foreach (KeyValuePair<string,Player> Pair in TransferDict) {
+            if (!(ResultDictionary.ContainsKey(Pair.Key))) {
+                ResultDictionary.Add(Pair.Key, Pair.Value);
+                continue;
+            }
+            else {
+                float NewPlayerEva = PlayerEvaluater.EvaluatePlayer(Pair.Value);
+                float OriginalPlayerEva = PlayerEvaluater.EvaluatePlayer(ResultDictionary[Pair.Key]);
+                if (NewPlayerEva > OriginalPlayerEva) {
+                    ResultDictionary[Pair.Key] = Pair.Value;
+                }
+            }
+        }
+    }
+    public static Dictionary<Player, int> MakeTransfer(Dictionary<string, Player> TypeOne, Dictionary<string, Player> TypeTwo, Dictionary<string, Player> TypeThree, Dictionary<string, Player> TransferAge, Dictionary<string, Player> TransferKeySub, int TeamWealth) {
+        Dictionary<Player, int> result = new Dictionary<Player, int>();
+        List<Player> TotalList = FinalPlayersToBuy(TypeOne, TypeTwo, TypeThree, TransferAge, TransferKeySub);
+        int TransferTime = 1;
+        int TraverseTime = TotalList.Count;
+        while ((TeamWealth > 0)&&(TransferTime <= 6)&&(TotalList.Count > 0)) {
+            int index = Random.Range(0, TotalList.Count);
+            int TransferFee = (int)(PlayerEvaluater.EvaluatePlayerTransferFee(TotalList[index]) * Random.Range(1.05f,1.5f));
+            Debug.Log("transfer fee is: " + TransferFee);
+            if (TransferFee < TeamWealth) {
+                TeamWealth -= TransferFee;
+                result.Add(TotalList[index],TransferFee);
+                TransferTime += 1;
+                Debug.Log("Current teamwealth is: " + TeamWealth);
+            }
+            TotalList.RemoveAt(index);
+        }
+        return result;
+    }
 
 
 

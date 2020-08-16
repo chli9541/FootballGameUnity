@@ -600,7 +600,7 @@ public class StreamingDatabaseManager
         }
         return GetMultiplePlayers(ids);
     }
-    public static int  GetTeamWealth(int TeamID)
+    public static int  GetTeamWealth(int TeamID) //Here I directly multiplied 10000
     {
         //string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = 3);");
         string query = string.Format("SELECT TeamWealth FROM Teams WHERE ID = {0};", TeamID);
@@ -622,6 +622,20 @@ public class StreamingDatabaseManager
             }
         }
         return TeamWealth;
+    }
+
+    public static void Transfer(int teamID, int TeamWealth, List<Player> TransferPlayers)
+    {
+        //List<Player> list = GetPlayersFromTeam(teamID);
+        UnityEngine.Debug.Log("start2");
+        string query1 = string.Format("update Players SET strength = strength + 0.1 where CurrentTeam = {0} and age<20", teamID);
+        string query2 = string.Format("update Players SET strength = strength + 0.07 where CurrentTeam = {0} and 19<age<25", teamID);
+        string query3 = string.Format("update Players SET strength = strength + 0.04 where CurrentTeam = {0} and 24<age<30", teamID);
+        string query4 = string.Format("update Players SET strength = strength + 0.02 where CurrentTeam = {0} and 29<age<35", teamID);
+        MakeNonSelectionQuery(query1);
+        MakeNonSelectionQuery(query2);
+        MakeNonSelectionQuery(query3);
+        MakeNonSelectionQuery(query4);
     }
 
 
