@@ -97,7 +97,7 @@ public class PlayerEvaluater : MonoBehaviour {
         float overall = EvaluatePlayer(p);
         // y = 217241.9 + (-146.8249 - 217241.9) / (1 + (x / 134.5301) ^ 8.420233)
         var basePrice = 217241.9 + (-146.8249 - 217241.9) / (1 + Mathf.Pow(overall / 134.5301f, 8.420233f));
-        return (int)basePrice;
+        return (int)basePrice * 10000;
     }
 
     public static float EvaluateDM(Player p)

@@ -546,12 +546,13 @@ public class TransferSystem : MonoBehaviour
         Dictionary<Player, int> result = new Dictionary<Player, int>();
         List<Player> TotalList = FinalPlayersToBuy(TypeOne, TypeTwo, TypeThree, TransferAge, TransferKeySub);
         int TransferTime = 1;
-        int TraverseTime = TotalList.Count;
-        while ((TeamWealth > 0)&&(TransferTime <= 6)&&(TotalList.Count > 0)) {
+        int OriginalTeamWealth = TeamWealth;
+        float RandomThreshold = Random.Range(0.015f,0.3f);
+        while ((TeamWealth > (int)(OriginalTeamWealth * RandomThreshold))&&(TransferTime <= 6)&&(TotalList.Count > 0)) {
             int index = Random.Range(0, TotalList.Count);
             int TransferFee = (int)(PlayerEvaluater.EvaluatePlayerTransferFee(TotalList[index]) * Random.Range(1.05f,1.5f));
             Debug.Log("transfer fee is: " + TransferFee);
-            if (TransferFee < TeamWealth) {
+            if ((TransferFee < TeamWealth) && ((TeamWealth-TransferFee) > 0.015 * OriginalTeamWealth)) {//team wealth after deducting transfer fee should still be bigger thah 1.5% of the orginal team wealth
                 TeamWealth -= TransferFee;
                 result.Add(TotalList[index],TransferFee);
                 TransferTime += 1;

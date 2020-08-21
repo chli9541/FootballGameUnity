@@ -616,15 +616,23 @@ public class StreamingDatabaseManager
                     while (reader.Read())
                     {
 
-                        TeamWealth = reader.GetInt32(0) * 10000;
+                        TeamWealth = reader.GetInt32(0);
                     }
                 }
             }
         }
         return TeamWealth;
     }
+    public static void UpdateTeamAfterTransfer(int teamID, int NewTeamWealth, List<Player> TransferPlayers) {
 
-    public static void Transfer(int teamID, int TeamWealth, List<Player> TransferPlayers)
+    }
+    public static void UpdateWealthAfterTransfer(int teamID, int NewTeamWealth, List<Player> TransferPlayers)
+    {
+
+    }
+
+
+    public static void Transfer(int teamID, int NewTeamWealth, List<Player> TransferPlayers)
     {
         //List<Player> list = GetPlayersFromTeam(teamID);
         UnityEngine.Debug.Log("start2");
@@ -637,7 +645,21 @@ public class StreamingDatabaseManager
         MakeNonSelectionQuery(query3);
         MakeNonSelectionQuery(query4);
     }
-
+    public static void MakeAllPlayersTradable()
+    {   
+        string query1 = string.Format("update Players SET Tradable = 0");   
+        MakeNonSelectionQuery(query1);
+    }
+    /// <summary>
+    /// Due to previous design problems, this function aims to correct database team wealth
+    /// </summary>
+    public static void CorrectDBWealth()
+    {
+        string query1 = string.Format("update Teams SET TeamWealth = 100 where TeamWealth = 0");
+        MakeNonSelectionQuery(query1);
+        string query2 = string.Format("update Teams SET TeamWealth = TeamWealth * 100000");
+        MakeNonSelectionQuery(query2);
+    }
 
 
 

@@ -14,8 +14,10 @@ public class ButtonTransfer : MonoBehaviour
         myBtn = GetComponent<Button>();
         myBtn.onClick.AddListener(delegate
         {
-
+            //StreamingDatabaseManager.CorrectDBWealth(); You only need to run this once, because now that all team wealth has been multiplied by 10w
             StreamingDatabaseManager.UpdateNull();//Fixed Database Null bug, not necessary if database does not have null values.
+            StreamingDatabaseManager.MakeAllPlayersTradable();// Only use this at the begining of trading season, this will make all players available,
+            //but we don't want this during trading season when players are traded they shouldn't be traded again.
             int TeamIndex = 4;//just using team 4 as an example, later you can change to any team.
             int TeamWealth = StreamingDatabaseManager.GetTeamWealth(TeamIndex);
 
