@@ -580,7 +580,7 @@ public class StreamingDatabaseManager
     public static List<Player> SearchChinesePlayersFromSameLeague(int TeamID)
     {
         //string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = 3);");
-        string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = (SELECT BelongingLeague FROM Teams WHERE ID = {0}));",TeamID);
+        string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam !={0} and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = (SELECT BelongingLeague FROM Teams WHERE ID = {0}));",TeamID);
         List<int> ids = new List<int>();
         string conn = "URI=file:" + Application.dataPath + "/StreamingAssets/db.db"; //Path to database.
         using (SqliteConnection c = new SqliteConnection(conn))
@@ -600,7 +600,7 @@ public class StreamingDatabaseManager
         }
         return GetMultiplePlayers(ids);
     }
-    public static int  GetTeamWealth(int TeamID) //Here I directly multiplied 10000
+    public static int  GetTeamWealth(int TeamID) 
     {
         //string query = string.Format("SELECT * FROM Players where Nationality = '中国' and CurrentTeam IN (SELECT ID FROM Teams WHERE BelongingLeague = 3);");
         string query = string.Format("SELECT TeamWealth FROM Teams WHERE ID = {0};", TeamID);
@@ -623,28 +623,32 @@ public class StreamingDatabaseManager
         }
         return TeamWealth;
     }
-    public static void UpdateTeamAfterTransfer(int teamID, int NewTeamWealth, List<Player> TransferPlayers) {
-
-    }
-    public static void UpdateWealthAfterTransfer(int teamID, int NewTeamWealth, List<Player> TransferPlayers)
-    {
-
-    }
+    
 
 
-    public static void Transfer(int teamID, int NewTeamWealth, List<Player> TransferPlayers)
+    public static void Transfer(int teamID, Dictionary<Player, int> TransferFinalList)
     {
         //List<Player> list = GetPlayersFromTeam(teamID);
         UnityEngine.Debug.Log("start2");
-        string query1 = string.Format("update Players SET strength = strength + 0.1 where CurrentTeam = {0} and age<20", teamID);
-        string query2 = string.Format("update Players SET strength = strength + 0.07 where CurrentTeam = {0} and 19<age<25", teamID);
-        string query3 = string.Format("update Players SET strength = strength + 0.04 where CurrentTeam = {0} and 24<age<30", teamID);
-        string query4 = string.Format("update Players SET strength = strength + 0.02 where CurrentTeam = {0} and 29<age<35", teamID);
-        MakeNonSelectionQuery(query1);
-        MakeNonSelectionQuery(query2);
-        MakeNonSelectionQuery(query3);
-        MakeNonSelectionQuery(query4);
+        foreach (KeyValuePair<Player, int> pair in TransferFinalList) {
+            string OldClub = pair.Key.currentClub; // this will be the old club when transfer happens
+            string query1 = string.Format("update Players SET CurrentTeam = {0} where ID = {1}", teamID, pair.Key.ID);
+            MakeNonSelectionQuery(query1);
+            string query2 = string.Format("update Players SET tradable = 1 where ID = {0}", pair.Key.ID);
+            MakeNonSelectionQuery(query2);
+
+            string query3 = string.Format("update Teams SET TeamWealth = TeamWealth + {0} where ID = {1}",pair.Value,OldClub);
+            string query4 = string.Format("update Teams SET TeamWealth = TeamWealth - {0} where ID = {1}", pair.Value, teamID);
+            MakeNonSelectionQuery(query3);
+            MakeNonSelectionQuery(query4);
+        }
+            
+        
+        
     }
+
+
+
     public static void MakeAllPlayersTradable()
     {   
         string query1 = string.Format("update Players SET Tradable = 0");   

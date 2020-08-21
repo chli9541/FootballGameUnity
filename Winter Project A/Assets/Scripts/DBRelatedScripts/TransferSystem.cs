@@ -551,11 +551,12 @@ public class TransferSystem : MonoBehaviour
         while ((TeamWealth > (int)(OriginalTeamWealth * RandomThreshold))&&(TransferTime <= 6)&&(TotalList.Count > 0)) {
             int index = Random.Range(0, TotalList.Count);
             int TransferFee = (int)(PlayerEvaluater.EvaluatePlayerTransferFee(TotalList[index]) * Random.Range(1.05f,1.5f));
-            Debug.Log("transfer fee is: " + TransferFee);
-            if ((TransferFee < TeamWealth) && ((TeamWealth-TransferFee) > 0.015 * OriginalTeamWealth)) {//team wealth after deducting transfer fee should still be bigger thah 1.5% of the orginal team wealth
+            
+            if ((TransferFee < TeamWealth) && ((TeamWealth-TransferFee) > (int)(OriginalTeamWealth * RandomThreshold))) {//team wealth after deducting transfer fee should still be bigger thah 1.5% of the orginal team wealth
                 TeamWealth -= TransferFee;
                 result.Add(TotalList[index],TransferFee);
                 TransferTime += 1;
+                Debug.Log("transfer fee is: " + TransferFee);
                 Debug.Log("Current teamwealth is: " + TeamWealth);
             }
             TotalList.RemoveAt(index);

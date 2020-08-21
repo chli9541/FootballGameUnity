@@ -16,9 +16,14 @@ public class ButtonTransfer : MonoBehaviour
         {
             //StreamingDatabaseManager.CorrectDBWealth(); You only need to run this once, because now that all team wealth has been multiplied by 10w
             StreamingDatabaseManager.UpdateNull();//Fixed Database Null bug, not necessary if database does not have null values.
-            StreamingDatabaseManager.MakeAllPlayersTradable();// Only use this at the begining of trading season, this will make all players available,
+
+            //Very IMPORTANT:
+            // Only use this at the begining of trading season, this will make all players available,
+            StreamingDatabaseManager.MakeAllPlayersTradable();
             //but we don't want this during trading season when players are traded they shouldn't be traded again.
-            int TeamIndex = 4;//just using team 4 as an example, later you can change to any team.
+
+
+            int TeamIndex = 6;//just using team 4 as an example, later you can change to any team.
             int TeamWealth = StreamingDatabaseManager.GetTeamWealth(TeamIndex);
 
             List<Player> TeamPlayers = StreamingDatabaseManager.GetPlayersFromTeam(TeamIndex);
@@ -56,9 +61,11 @@ public class ButtonTransfer : MonoBehaviour
             Dictionary<Player,int> TransferFinalList = TransferSystem.MakeTransfer(TypeOneTransfer, TypeTwoTransfer, TypeThreeTransfer, AgeTransfer, KeyPlayerSubTransfer, TeamWealth);
             foreach (KeyValuePair < Player,int> pair in TransferFinalList)
             {
-                Debug.Log(pair.Key.position);
-                Debug.Log(PlayerEvaluater.EvaluatePlayer(pair.Key));
+                Debug.Log(pair.Key.currentClub);
+                Debug.Log(pair.Key.ID);
+                //Debug.Log(PlayerEvaluater.EvaluatePlayer(pair.Key));
             }
+            StreamingDatabaseManager.Transfer(TeamIndex,TransferFinalList);
 
         }
         
