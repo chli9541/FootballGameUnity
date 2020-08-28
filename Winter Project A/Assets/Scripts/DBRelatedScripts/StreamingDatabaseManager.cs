@@ -636,7 +636,9 @@ public class StreamingDatabaseManager
             MakeNonSelectionQuery(query1);
             string query2 = string.Format("update Players SET tradable = 1 where ID = {0}", pair.Key.ID);
             MakeNonSelectionQuery(query2);
-
+            
+            if(OldClub == "-1")
+                return;
             string query3 = string.Format("update Teams SET TeamWealth = TeamWealth + {0} where ID = {1}",pair.Value,OldClub);
             string query4 = string.Format("update Teams SET TeamWealth = TeamWealth - {0} where ID = {1}", pair.Value, teamID);
             MakeNonSelectionQuery(query3);
